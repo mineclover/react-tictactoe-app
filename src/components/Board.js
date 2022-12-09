@@ -8,51 +8,9 @@ import Square from './Square';
 import './Board.css';
 
 const Board = () => {
-	const [squares, setSquares] = useState(Array(9).fill(null));
-	const [xIsNExt, setXIsNExt] = useState(true);
-	const winner = calculateWinner(squares);
-	let status;
-	if (winner) {
-		status = 'Winner: ' + winner;
-	} else {
-		status = 'Next player: ' + (xIsNExt ? 'X' : 'O');
-	}
-
-	const handClick = i => {
-		const newSquares = squares.slice();
-		if (calculateWinner(newSquares) || newSquares[i]) {
-			return;
-		}
-		newSquares[i] = xIsNExt ? 'X' : 'O';
-
-		setSquares(newSquares);
-		//setXIsNExt(!xIsNExt);
-		setXIsNExt(prev => !prev); // 이게 여러번 실행됬을 때 누락 없이 동작이 가능한 코드
-	};
-
 	const renderSquare = i => {
 		return <Square value={squares[i]} onClick={() => handClick(i)} />;
 	};
-
-	function calculateWinner(squares) {
-		const lines = [
-			[0, 1, 2],
-			[3, 4, 5],
-			[6, 7, 8],
-			[0, 3, 6],
-			[1, 4, 7],
-			[2, 5, 8],
-			[0, 4, 8],
-			[2, 4, 6],
-		];
-		for (let i = 0; i < lines.length; i++) {
-			const [a, b, c] = lines[i];
-			if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-				console.log('squares[a]', squares[a]);
-				return squares[a];
-			}
-		}
-	}
 
 	return (
 		<div>
