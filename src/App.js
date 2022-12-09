@@ -1,33 +1,26 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import './App.css';
 import Board from './components/Board';
-
 const App = () => {
-	const [history, setHistory] = useState({ squares: Array(9).fill(null) });
-	const [xIsNExt, setXIsNExt] = useState(true);
-	const current = history[history - 1];
-
+	const [history, setHistory] = useState([{ squares: Array(9).fill(null) }]);
+	const [xIsNext, setXIsNext] = useState(true);
+	const current = history[history.length - 1];
 	const winner = calculateWinner(current.squares);
-
 	let status;
 	if (winner) {
 		status = 'Winner: ' + winner;
 	} else {
-		status = 'Next player: ' + (xIsNExt ? 'X' : 'O');
+		status = `Next player: ${xIsNext ? 'X' : 'O'}`;
 	}
-
-	const handClick = i => {
+	const handleClick = i => {
 		const newSquares = current.squares.slice();
 		if (calculateWinner(newSquares) || newSquares[i]) {
 			return;
 		}
-		newSquares[i] = xIsNExt ? 'X' : 'O';
-
+		newSquares[i] = xIsNext ? 'X' : 'O';
 		setHistory([...history, { squares: newSquares }]);
-		//setXIsNExt(!xIsNExt);
-		setXIsNExt(prev => !prev); // 이게 여러번 실행됬을 때 누락 없이 동작이 가능한 코드
+		setXIsNext(previousValue => !previousValue);
 	};
-
 	function calculateWinner(squares) {
 		const lines = [
 			[0, 1, 2],
@@ -42,26 +35,25 @@ const App = () => {
 		for (let i = 0; i < lines.length; i++) {
 			const [a, b, c] = lines[i];
 			if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-				console.log('squares[a]', squares[a]);
 				return squares[a];
 			}
 		}
+		return null;
 	}
-
 	return (
 		<div className="game">
-			{/*game board */}
+			{/* game-board */}
 			<div className="game-board">
-				<Board onClick={haanleClick(i)} />
+				<Board squares={current.squares} onClick={i => handleClick(i)} />
 			</div>
-			{/*game info */}
-			<div className="game-info">game-info</div>
-			{/* status */}
-			<div>status</div>
-			{/* TODO */}
-			<ol>TODO</ol>
+			{/* game-info */}
+			<div className="game-info">
+				{/* status */}
+				<div className="status">{status}</div>
+				{/* TODO */}
+				<ol></ol>
+			</div>
 		</div>
 	);
 };
-
 export default App;
