@@ -2,10 +2,29 @@ import React, { useState } from 'react';
 import './App.css';
 import Board from './components/Board';
 const App = () => {
+	// 저장하는 값
 	const [history, setHistory] = useState([{ squares: Array(9).fill(null) }]);
 	const [xIsNext, setXIsNext] = useState(true);
-	const current = history[history.length - 1];
+	const [stepNumber, setStepNumber] = useState(0);
+	const current = history[stepNumber];
 	const winner = calculateWinner(current.squares);
+
+	const jumpTo = move => {
+		setStepNumber(move);
+		setXIsNext(move % 2 === 0);
+		// square 를 수정해서 다시 그려야함
+	};
+
+	// 1 먼저 실행되고 자주 실행되는 함수
+	const moves = history.map((step, move) => {
+		const desc = move ? 'Go to move #' + move : 'Go to game start';
+		return (
+			<li key={move}>
+				<button onClick={() => jumpTo(move)}>{desc}</button>
+			</li>
+		);
+	});
+
 	let status;
 	if (winner) {
 		status = 'Winner: ' + winner;
@@ -13,13 +32,22 @@ const App = () => {
 		status = `Next player: ${xIsNext ? 'X' : 'O'}`;
 	}
 	const handleClick = i => {
-		const newSquares = current.squares.slice();
+		// slice 가 마지막 커서를 포함하지 않아서 + 1
+		const newHistory = history.slice(0, stepNumber + 1);
+		const newCurrent = newHistory[newHistory.length - 1];
+
+		const newSquares = newCurrent.squares.slice();
 		if (calculateWinner(newSquares) || newSquares[i]) {
 			return;
 		}
 		newSquares[i] = xIsNext ? 'X' : 'O';
-		setHistory([...history, { squares: newSquares }]);
+		// 기존 셋 히스토리 방식은 기존 데이터에서 추가되는 거였는데
+		// 새로운 데이터를 만들어서( 뒤로 계속 가는 방식 ) 넣어주는 방식으로 변경
+		setHistory([...newHistory, { squares: newSquares }]);
 		setXIsNext(previousValue => !previousValue);
+
+		// 변경됬을 때 히스토리가 이전 값을 가리칠 수 있도록
+		setStepNumber(newHistory.length);
 	};
 	function calculateWinner(squares) {
 		const lines = [
@@ -50,8 +78,8 @@ const App = () => {
 			<div className="game-info">
 				{/* status */}
 				<div className="status">{status}</div>
-				{/* TODO */}
-				<ol></ol>
+				{/* 작업 내역을 추가함 */}
+				<ol>{moves}</ol>
 			</div>
 		</div>
 	);
