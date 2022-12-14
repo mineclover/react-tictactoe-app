@@ -1,2 +1,9 @@
 .board {
 }
+
+.board-wrapper {
+	border: 1px solid rgba(0, 0, 0, 0.2);
+	box-shadow: rgba(0, 0, 0, 0.2) 0px 10px 20px;
+	border-radius: 9px;
+	overflow: t;
+}
